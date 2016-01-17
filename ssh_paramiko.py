@@ -29,7 +29,7 @@ def addnewvip(ip,username,password):
     # Turn off paging
     #disable_paging(remote_conn)
 
-    # Now let's send the ns a command
+    # Now let's send the commands
     remote_conn.send("\n"
     +"add server prdtestlb001 192.168.1.1\n"
     +"add service svc-8080-prdtestlb001 prdtestlb001 HTTP 8080\n"
@@ -78,7 +78,7 @@ def checkconfig(ip,username,password):
     # Turn off paging
     #disable_paging(remote_conn)
 
-    # Now let's send a ns  command
+    # Now let's send the commands
     remote_conn.send("\n"
     +"\n"
     +"show run | g testlb\n")
