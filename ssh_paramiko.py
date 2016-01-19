@@ -26,10 +26,7 @@ def addnewvip(ip,username,password):
     # See what we have
     print output
 
-    # Turn off paging
-    #disable_paging(remote_conn)
-
-    # Now let's send the commands
+    # Now let's try to send the NS a command
     remote_conn.send("\n"
     +"add server prdtestlb001 192.168.1.1\n"
     +"add service svc-8080-prdtestlb001 prdtestlb001 HTTP 8080\n"
@@ -39,6 +36,35 @@ def addnewvip(ip,username,password):
     +"bind lb vserver  lb-80-testlb.default svc-8080-prdtestlb001\n"
     +"bind cs vserver cs-80-testlb -lbvserver lb-80-testlb.default\n"
     +"bind cs vserver cs-443-testlb -lbvserver lb-80-testlb.default\n")
+
+    # Wait for the command to complete
+    time.sleep(2)
+
+    output = remote_conn.recv(1000000)
+    # See what we have
+    print output
+
+def rmvip(ip,username,password):
+
+    # Create instance of SSHClient object
+    remote_conn_pre = paramiko.SSHClient()
+
+    # Automatically add untrusted hosts (make sure okay for security policy in your environment)
+    remote_conn_pre.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # initiate SSH connection
+    remote_conn_pre.connect(ip, username=username, password=password, look_for_keys=False, allow_agent=False)
+    print "SSH connection established to %s" % ip+"\n"
+
+    # Use invoke_shell to establish an 'interactive session'
+    remote_conn = remote_conn_pre.invoke_shell()
+    print "Interactive SSH session established\n"
+
+    # Strip the initial router prompt
+    output = remote_conn.recv(10000000)
+
+    # See what we have
+    print output
 
     #Remove config
     remote_conn.send("\n"
@@ -78,7 +104,7 @@ def checkconfig(ip,username,password):
     # Turn off paging
     #disable_paging(remote_conn)
 
-    # Now let's send the commands
+    # Now let's try to send the router a command
     remote_conn.send("\n"
     +"\n"
     +"show run | g testlb\n")
@@ -94,14 +120,33 @@ if __name__ == '__main__':
 
     # VARIABLES
     ip = 'xx.xx.xx.xx'
-    username = raw_input('\ninsert your username:')
-    password = getpass.getpass("Enter your password:")
-    #nameSVRS = raw_input('\ninsert name of servers:')
-    #serviceSVRS = int(raw_input('\ninsert service running on servers:'))
-    #newvip = raw_input('\ninsert name of New Vip:')
-    #vipip1 = raw_input('\ninsert First IP of New Vip:')
 
-    addnewvip(ip,username,password)
-    checkconfig(ip,username,password)
+    option1 = raw_input('\nAdd new VIP [Y] or [N]:\n')
+
+    if (option1 == 'Y' or option1 == 'y'):
+        print "\n###### NEW VIP ########\n"
+        username = raw_input('\ninsert your username:')
+        password = getpass.getpass("Enter your password:")
+        addnewvip(ip,username,password)
+        sys.exit(0)
+
+    option2 = raw_input('\n\nCheck the configs you made on Netscaler [Y] or [N]:\n')
+
+    if (option2 == 'Y' or option2 == 'y'):
+
+        print "\n\n\nNow Checking the configuration you made on Netscaler\n"
+        username = raw_input('\ninsert your username:')
+        password = getpass.getpass("Enter your password:")
+        checkconfig(ip,username,password)
+        sys.exit(0)
+
+    option3 = raw_input('\nRemove VIP on Netscaler [Y] or [N]:\n')
+
+    if (option3 == 'Y' or option3 == 'y'):
+        print "\n###### RM VIP ########\n"
+        username = raw_input('\ninsert your username:')
+        password = getpass.getpass("Enter your password:")
+        rmvip(ip,username,password)
+        sys.exit(0)
 
     sys.exit(0)
