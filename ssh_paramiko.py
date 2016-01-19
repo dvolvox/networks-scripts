@@ -27,6 +27,7 @@ def addnewvip(ip,username,password):
     print output
 
     # Now let's try to send the NS a command
+    ##### add new config #####
     remote_conn.send("\n"
     +"add server prdtestlb001 192.168.1.1\n"
     +"add service svc-8080-prdtestlb001 prdtestlb001 HTTP 8080\n"
@@ -66,7 +67,8 @@ def rmvip(ip,username,password):
     # See what we have
     print output
 
-    #Remove config
+    # Now let's try to send the NS a command
+    ##### Remove config #####
     remote_conn.send("\n"
     +"rm cs vserver cs-80-testlb\n"
     +"rm cs vserver cs-443-testlb\n"
@@ -119,20 +121,27 @@ def checkconfig(ip,username,password):
 if __name__ == '__main__':
 
     # VARIABLES
-    ip = 'xx.xx.xx.xx'
+    ip = '10.42.24.6'
 
-    option1 = raw_input('\nAdd new VIP [Y] or [N]:\n')
+    option = raw_input("\n"
+    +"##################### NETSCALER #####################\n"
+    +"\n"
+    +"\n"
+    +"Please choose one of the otpions below:\n"
+    +"\n"
+    +"[1] - Add new VIP \n\n"
+    +"[2] - Check the configuration on Netscaler \n\n"
+    +"[3] - Remove VIP on Netscaler \n\n"
+    +"[option]:")
 
-    if (option1 == 'Y' or option1 == 'y'):
+    if (option == '1'):
         print "\n###### NEW VIP ########\n"
         username = raw_input('\ninsert your username:')
         password = getpass.getpass("Enter your password:")
         addnewvip(ip,username,password)
         sys.exit(0)
 
-    option2 = raw_input('\n\nCheck the configs you made on Netscaler [Y] or [N]:\n')
-
-    if (option2 == 'Y' or option2 == 'y'):
+    if (option == '2'):
 
         print "\n\n\nNow Checking the configuration you made on Netscaler\n"
         username = raw_input('\ninsert your username:')
@@ -140,9 +149,7 @@ if __name__ == '__main__':
         checkconfig(ip,username,password)
         sys.exit(0)
 
-    option3 = raw_input('\nRemove VIP on Netscaler [Y] or [N]:\n')
-
-    if (option3 == 'Y' or option3 == 'y'):
+    if (option == '3'):
         print "\n###### RM VIP ########\n"
         username = raw_input('\ninsert your username:')
         password = getpass.getpass("Enter your password:")
