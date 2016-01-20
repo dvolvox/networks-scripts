@@ -5,7 +5,7 @@ import sys
 
 ####### at the moment this script is only for switchport mode access #######
 
-def sh_interfaces(ip,username,password):
+def sh_interfaces(ip,username,password,output_buffer):
 
     # Create instance of SSHClient object
     remote_conn_pre = paramiko.SSHClient()
@@ -22,7 +22,7 @@ def sh_interfaces(ip,username,password):
     print "Interactive SSH session established\n"
 
     # Strip the initial router prompt
-    output = remote_conn.recv(10000000)
+    output = remote_conn.recv(output_buffer)
 
     # See what we have
     print output
@@ -35,11 +35,11 @@ def sh_interfaces(ip,username,password):
     # Wait for the command to complete
     time.sleep(2)
 
-    output = remote_conn.recv(1000000)
+    output = remote_conn.recv(output_buffer)
     # See what we have
     print output
 
-def new_config_switchport(ip,username,password,name_interface,vlan_id):
+def new_config_switchport(ip,username,password,name_interface,vlan_id,output_buffer):
 
     # Create instance of SSHClient object
     remote_conn_pre = paramiko.SSHClient()
@@ -56,7 +56,7 @@ def new_config_switchport(ip,username,password,name_interface,vlan_id):
     print "Interactive SSH session established\n"
 
     # Strip the initial router prompt
-    output = remote_conn.recv(10000000)
+    output = remote_conn.recv(output_buffer)
 
     # See what we have
     print output
@@ -77,11 +77,11 @@ def new_config_switchport(ip,username,password,name_interface,vlan_id):
     # Wait for the command to complete
     time.sleep(3)
 
-    output = remote_conn.recv(1000000)
+    output = remote_conn.recv(output_buffer)
     # See what we have
     print output
 
-def checkconfig_switchport(ip,username,password,name_interface):
+def checkconfig_switchport(ip,username,password,name_interface,output_buffer):
     # Create instance of SSHClient object
     remote_conn_pre = paramiko.SSHClient()
 
@@ -97,7 +97,7 @@ def checkconfig_switchport(ip,username,password,name_interface):
     print "Interactive SSH session established - to Check config on SW\n"
 
     # Strip the initial router prompt
-    output = remote_conn.recv(10000000)
+    output = remote_conn.recv(output_buffer)
 
     # See what we have
     print output
@@ -110,7 +110,7 @@ def checkconfig_switchport(ip,username,password,name_interface):
     # Wait for the command to complete
     time.sleep(2)
 
-    output = remote_conn.recv(1000000)
+    output = remote_conn.recv(output_buffer)
     # See what we have
     print output
 
@@ -118,40 +118,41 @@ if __name__ == '__main__':
 
     # VARIABLES
     ip = 'xx.xx.xx.xx'
-    name_switch = 'xxxxx'
-    name_interface = 'xx'
-    vlan_id=''
+    output_buffer = 1000000
+    name_switch = 'name of device'
+    name_interface = 'PORT'
+    vlan_id='number'
+
+
 
     option = raw_input("\n"
     +"##################### SWITCHING #####################\n"
     +"\n"
     +"\n"
-    +"Please choose one of otpions below:\n"
+    +"Please choose one of the otpions below:\n"
     +"\n"
     +"[1] - Configure a new switchport on switch - " + name_switch +"\n\n"
     +"[2] - "+name_switch+"- show interface configuration on " + name_interface +"\n\n"
-    +"[3] - Show all ports on" + name_switch +"\n\n"
+    +"[3] - Show all ports on " + name_switch +"\n\n"
     +"[option]:")
+
+    print "\n\n##################### TACACS Login #####################\n"
+    username = raw_input('\ninsert your username:')
+    password = getpass.getpass("Enter your password:")
 
     if (option == '1'):
         print "###### CONFIG NEW SWITCHPORT ########\n"
-        username = raw_input('\ninsert your username:')
-        password = getpass.getpass("Enter your password:")
-        new_config_switchport(ip,username,password,name_interface,vlan_id)
+        new_config_switchport(ip,username,password,name_interface,vlan_id,output_buffer)
         sys.exit(0)
 
     if (option == '2'):
         print "\n###### INTERFACE CONFIGURATION ########\n"
-        username = raw_input('\ninsert your username:')
-        password = getpass.getpass("Enter your password:")
-        checkconfig_switchport(ip,username,password,name_interface)
+        checkconfig_switchport(ip,username,password,name_interface,output_buffer)
         sys.exit(0)
 
     if (option == '3'):
         print "###### INTERFACES ########\n"
-        username = raw_input('\ninsert your username:')
-        password = getpass.getpass("Enter your password:")
-        sh_interfaces(ip,username,password)
+        sh_interfaces(ip,username,password,output_buffer)
         sys.exit(0)
 
     sys.exit(0)
