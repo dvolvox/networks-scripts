@@ -4,7 +4,7 @@ import getpass
 import sys
 
 
-def addnewvip(ip,username,password):
+def addnewvip(ip,username,password,output_buffer):
 
     # Create instance of SSHClient object
     remote_conn_pre = paramiko.SSHClient()
@@ -21,7 +21,7 @@ def addnewvip(ip,username,password):
     print "Interactive SSH session established\n"
 
     # Strip the initial router prompt
-    output = remote_conn.recv(10000000)
+    output = remote_conn.recv(output_buffer)
 
     # See what we have
     print output
@@ -41,11 +41,11 @@ def addnewvip(ip,username,password):
     # Wait for the command to complete
     time.sleep(2)
 
-    output = remote_conn.recv(1000000)
+    output = remote_conn.recv(output_buffer)
     # See what we have
     print output
 
-def rmvip(ip,username,password):
+def rmvip(ip,username,password,output_buffer):
 
     # Create instance of SSHClient object
     remote_conn_pre = paramiko.SSHClient()
@@ -62,7 +62,7 @@ def rmvip(ip,username,password):
     print "Interactive SSH session established\n"
 
     # Strip the initial router prompt
-    output = remote_conn.recv(10000000)
+    output = remote_conn.recv(output_buffer0)
 
     # See what we have
     print output
@@ -78,11 +78,11 @@ def rmvip(ip,username,password):
     # Wait for the command to complete
     time.sleep(2)
 
-    output = remote_conn.recv(1000000)
+    output = remote_conn.recv(output_buffer)
     # See what we have
     print output
 
-def checkconfig(ip,username,password):
+def checkconfig(ip,username,password,output_buffer):
     # Create instance of SSHClient object
     remote_conn_pre = paramiko.SSHClient()
 
@@ -98,7 +98,7 @@ def checkconfig(ip,username,password):
     print "Interactive SSH session established - to Check config on NS\n"
 
     # Strip the initial router prompt
-    output = remote_conn.recv(10000000)
+    output = remote_conn.recv(output_buffer)
 
     # See what we have
     print output
@@ -114,15 +114,15 @@ def checkconfig(ip,username,password):
     # Wait for the command to complete
     time.sleep(2)
 
-    output = remote_conn.recv(1000000)
+    output = remote_conn.recv(output_buffer)
     # See what we have
     print output
 
 if __name__ == '__main__':
 
     # VARIABLES
-    ip = '10.42.24.6'
-
+    ip = 'xx.xx.xx.xx'
+    output_buffer = 1000000
     option = raw_input("\n"
     +"##################### NETSCALER #####################\n"
     +"\n"
@@ -134,26 +134,25 @@ if __name__ == '__main__':
     +"[3] - Remove VIP on Netscaler \n\n"
     +"[option]:")
 
+    print "\n\n##################### TACACS Login #####################\n"
+    username = raw_input('\ninsert your username:')
+    password = getpass.getpass("Enter your password:")
+
+
     if (option == '1'):
         print "\n###### NEW VIP ########\n"
-        username = raw_input('\ninsert your username:')
-        password = getpass.getpass("Enter your password:")
-        addnewvip(ip,username,password)
+        addnewvip(ip,username,password,output_buffer)
         sys.exit(0)
 
     if (option == '2'):
 
         print "\n\n\nNow Checking the configuration you made on Netscaler\n"
-        username = raw_input('\ninsert your username:')
-        password = getpass.getpass("Enter your password:")
-        checkconfig(ip,username,password)
+        checkconfig(ip,username,password,output_buffer)
         sys.exit(0)
 
     if (option == '3'):
         print "\n###### RM VIP ########\n"
-        username = raw_input('\ninsert your username:')
-        password = getpass.getpass("Enter your password:")
-        rmvip(ip,username,password)
+        rmvip(ip,username,password,output_buffer)
         sys.exit(0)
 
     sys.exit(0)
